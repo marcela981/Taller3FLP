@@ -332,3 +332,27 @@
 ; Si @numero entonces (@numero * evaluar@factorial(sub1(@numero))finEval) sino 1 finSI
 ; {evaluar @factorial(5) finEval}
 
+; PUNTO C
+; Calcula la suma de dos numeros forma recursiva con las primitivas add1 y sub1. 
+;letrec
+;       @sumar(@a,@b) = Si @a entonces add1(evaluar @sumar(sub1(@a),@b)finEval) sino @b finSI
+;       in
+;       evaluar @sumar(4,5) finEval
+
+; PUNTO D 
+;Resta: calcula la resta de dos numeros de forma recursiva con las primitivas add1 y sub1. 
+;letrec
+;       @resta(@a,@b) = Si @b entonces sub1(evaluar @resta(@a,sub1(@b))finEval) sino @a finSI
+;       in
+;       evaluar @resta(10,3) finEval
+
+
+
+;Multiplicacion: calcula la multiplicación de dos numeros de forma recursiva con las primitivas add1 y sub1. 
+;  letrec
+;    @restar(@a,@b) = Si @b entonces evaluar @restar(sub1(@a),sub1(@b)) finEval sino @a finSI
+
+;    @suma(@a,@b) = Si @b entonces evaluar @suma(add1(@a),sub1(@b)) finEval sino @a finSI
+;    @multiplicacion(@a,@b) = Si @b entonces evaluar @suma(@a , evaluar @multiplicacion(@a,sub1(@b)) finEval ) finEval sino evaluar @restar(@a,@a) finEval finSI 
+
+;    in evaluar @multiplicacion(10,3) finEval
