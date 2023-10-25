@@ -3,6 +3,7 @@
 ;;Taller #3
 
 ;;Marcela Mazo Castro 1843612
+;; Hassen David Ortiz 2177273
 
 
 ;Especificación Léxica
@@ -28,6 +29,9 @@
 
     ;Programa
     (programa (expresion) un-programa)
+
+    ;; Body
+    (cuerpo (expresion (arbno expresion)) cuerpoc)
 
     ;Expresiones
     (expresion (numero) numero-lit)
@@ -142,6 +146,12 @@
                                   (extended-env ids args env))))
        ;;Error de definición(?)
       )))
+
+      (if-exp (test-exp true-exp false-exp)
+              (if (true-value? (evaluar-expresion test-exp env))
+                  (evaluar-expresion true-exp env)
+                  (evaluar-expresion false-exp env))) 
+    
 
 
 
@@ -263,6 +273,3 @@
     (evaluar-expresion rand env)))
 
 ;/////////////////////////////////////////////////////////Funciones Auxiliares/////////////////////////////////////////////////////////
-
-;Crear  funcion auxiliares para encontrar la posición de un símbolo
-;
