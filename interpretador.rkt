@@ -151,6 +151,11 @@
               (if (true-value? (evaluar-expresion test-exp env))
                   (evaluar-expresion true-exp env)
                   (evaluar-expresion false-exp env))) 
+
+      (variableLocal-exp (ids rands body)
+               (let ((args (eval-rands rands env)))
+                 (evaluar-expresion body
+                                  (extended-env ids args env))))
     
 
 
