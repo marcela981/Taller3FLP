@@ -327,5 +327,25 @@
  
  varFact @factorial(@numero)=
  Si @numero entonces (@numero * evaluar@factorial(sub1(@numero))finEval) sino 1 finSI
- {evaluar @factorial(5) finEval} 
+ {evaluar @factorial(5) finEval}
+
+
+; PUNTO E
+
+declaraAlm
+//Procedimiento que retorna un string con los nombres
+@integrantes() = "Marcela-Hassen-Kevin" 
+@hola (@integrantes) = ("Hola:" concat evaluar @integrantes() finEval)
+{
+evaluar @decorate () finEval }
+
+; PUNTO F
+declaraAlm
+ //Procedimiento que retorna un string con los nombres
+@integrantes() = "Marcela-Hassen-Kevin"
+@hola(@integrantes) = ("Hola:" concat evaluar @integrantes() finEval) 
+@decorate(@x) = (evaluar @hola(@integrantes) finEval concat @x) 
+{
+evaluar @decorate ("-ProfesoresFLP") finEval }
+
  
