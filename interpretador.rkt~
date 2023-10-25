@@ -2,13 +2,11 @@
 
 ;;Taller #3
 
-;; Marcela Mazo Castro 1843612
+;;Marcela Mazo Castro 1843612
 ;; Hassen David Ortiz 2177273
-;; Kevin Tobar 1941369
-;; https://github.com/marcela981/Taller3FLP/
 
 
-;; Especificación Léxica
+;Especificación Léxica
 
 (define scanner-especificacion-lexica
 '(
@@ -24,17 +22,18 @@
  )
 )
 
-;; Gramatica
+;Gramatica
 
-(define interpretador-gramatica
+(define interprerador-gramatica
   '(
-    ;; Programa
+
+    ;Programa
     (programa (expresion) un-programa)
 
     ;; Body
     (cuerpo (expresion (arbno expresion)) cuerpoc)
 
-    ;; Expresiones
+    ;Expresiones
     (expresion (numero) numero-lit)
     (expresion ("\""texto"\"") texto-lit)
     (expresion (identificador) var-exp)
@@ -47,8 +46,9 @@
     (expresion ("declaraRec" (arbno identificador "(" (separated-list identificador ",") ")" "=" expresion)  "{" expresion "}") 
                 letrec-exp)
 
+
     
-    ;; Primitiva binaria
+    ;Primitiva binaria
     
     (primitiva-binaria ("+") primitiva-suma)
     (primitiva-binaria ("~") primitiva-resta)
@@ -56,11 +56,13 @@
     (primitiva-binaria ("*") primitiva-multi)
     (primitiva-binaria ("concat") primitiva-concat)
 
-    ;; Primitiva unaria
+    ;Primitiva unaria
     
     (primitiva-unaria ("longitud") primitiva-longitud)
     (primitiva-unaria ("add1") primitiva-add1)
-    (primitiva-unaria ("sub1") primitiva-sub1))
+    (primitiva-unaria ("sub1") primitiva-sub1)
+    
+    )
   )
 
 ;//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,24 +71,25 @@
 
 ;Tipos de datos para la sintaxis abstracta ((Análisis léxico y sintáctico)
 (define scan&parse
-  (sllgen:make-string-parser scanner-especificacion-lexica interpretador-gramatica))
+  (sllgen:make-string-parser scanner-especificacion-lexica interprerador-gramatica))
 
 ;El Analizador Léxico (Scanner)
+
 (define just-scan
-  (sllgen:make-string-scanner scanner-especificacion-lexica interpretador-gramatica))
+  (sllgen:make-string-scanner scanner-especificacion-lexica interprerador-gramatica))
   
-(sllgen:make-define-datatypes scanner-especificacion-lexica interpretador-gramatica)
+(sllgen:make-define-datatypes scanner-especificacion-lexica interprerador-gramatica)
 
 (define show-the-datatypes
-  (lambda () (sllgen:list-define-datatypes scanner-especificacion-lexica interpretador-gramatica)))
-
+  (lambda () (sllgen:list-define-datatypes scanner-especificacion-lexica interprerador-gramatica)))
 ;El Interpretador (FrontEnd + Evaluación + señal para lectura )
+
 (define interpretador
   (sllgen:make-rep-loop  "--> "
     (lambda (pgm) (eval-program  pgm)) 
     (sllgen:make-stream-parser 
       scanner-especificacion-lexica
-      interpretador-gramatica)))
+      interprerador-gramatica)))
 
 ;//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -120,6 +123,7 @@
      '(1 2 3 "hola" "FLP")
      (empty-env))))
 
+;
 ;Evalua la expresión en el ambiente de entrada
 (define evaluar-expresion
   (lambda (exp env)
@@ -140,39 +144,20 @@
                (let ((args (eval-rands rands env)))
                  (evaluar-expresion body
                                   (extended-env ids args env))))
-      (procedimiento-exp (ids body)
-                (cerradura ids body env))
-      (app-exp (rator rands)
-               (let ((proc (evaluar-expresion rator env))
-                     (args (eval-rands rands env)))
-                 (if (procVal? proc)
-                     (apply-procedure proc args)
-                     (eopl:error 'eval-expression
-                                 "Attempt to apply non-procedure ~s" proc))))
-      (letrec-exp (proc-names idss bodies letrec-body)
-                  (evaluar-expresion letrec-body
-                                   (extend-env-recursively proc-names idss bodies env)))
+       ;;Error de definición(?)
       )))
 
+      (if-exp (test-exp true-exp false-exp)
+              (if (true-value? (evaluar-expresion test-exp env))
+                  (evaluar-expresion true-exp env)
+                  (evaluar-expresion false-exp env))) 
 
       (variableLocal-exp (ids rands body)
                (let ((args (eval-rands rands env)))
                  (evaluar-expresion body
                                   (extended-env ids args env))))
     
-       (procedimiento-exp (ids body)
-                (cerradura ids body env))
-      (app-exp (rator rands)
-               (let ((proc (evaluar-expresion rator env))
-                     (args (eval-rands rands env)))
-                 (if (procVal? proc)
-                     (apply-procedure proc args)
-                     (eopl:error 'eval-expression
-                                 "Attempt to apply non-procedure ~s" proc))))
-      (letrec-exp (proc-names idss bodies letrec-body)
-                  (evaluar-expresion letrec-body
-                                   (extend-env-recursively proc-names idss bodies env)))
-      
+
 
 
 ;apply-primitive-bin: <primitiva> <expresion> <expresion> -> numero | string
@@ -190,7 +175,6 @@
 (define apply-primitive-un
   (lambda (prim args)
     (cases primitiva-unaria prim
-      (primitiva-longitud () (string-length args))
       (primitiva-add1 () (+ args 1))
       (primitiva-sub1 () (- args 1))
       )))
@@ -214,7 +198,7 @@
             (indice-lista-aux (+ n 1) pred (cdr lst))))))
 
 ;buscar-pos
-;Funcion auxiliar que retorna la posición del elemento
+;Funcion auxiliar que retorna la posición del lemento
 (define (buscar-pos lst n)
   (if (zero? n)
       (car lst)
@@ -275,23 +259,7 @@
                                              (buscar-variable old-env sym))))
       )))
  
-
-;; Se define nuevo datatype para la cerradura
-(define-datatype procVal procVal?
-  (cerradura
-   (lista-ID(list-of symbol?))
-   (exp expresion?)
-   (amb environment?)))
-
-
-;apply-procedure: evalua el cuerpo de un procedimientos en el ambiente extendido correspondiente
-(define apply-procedure
-  (lambda (proc args)
-    (cases procVal proc
-      (cerradura (ids body env)
-               (evaluar-expresion body (extended-env ids args env))))))
-
-
+                                 
 ;Función para probar booleanos
 (define valor-verdad?
   (lambda(x)
