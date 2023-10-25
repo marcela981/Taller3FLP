@@ -351,93 +351,25 @@
 
 ;/////////////////////////////////////////////////////////Dibujos/////////////////////////////////////////////////////////
 
-;Arbol sintaxis abstracta 1 punto 7
-; un-programa
-; |
-; |-- variableLocal-exp (@x, @y, @a)
-; |   |
-; |   |-- numero-lit 2
-; |   |
-; |   |-- numero-lit 3
-; |   |
-; |   |-- procedimiento-exp (@x, @y, @z)
-; |   |   |
-; |   |   |-- primapp-bin-exp
-; |   |   |   |
-; |   |   |   |-- primapp-bin-exp (var-exp @x + var-exp @y)
-; |   |   |   |
-; |   |   |   |-- primitiva-suma
-; |   |   |   |
-; |   |   |   |-- var-exp @z
-; |   |
-; |   |-- app-exp
-; |   |   |
-; |   |   |-- var-exp @a
-; |   |   |
-; |   |   |-- numero-lit 1
-; |   |   |
-; |   |   |-- numero-lit 2
-; |   |   |
-; |   |   |-- var-exp @x
-; 
+; PUNTO A
+ ;// Funcion areaCirculo
+ ;// Calcula el area de un circulo dado un radio (A=PI*r*r)
+ declarar (@radio=2.5;
+           @areaCirculo=procedimiento(@area) haga (3.14*(@area*@area)) finProc)
+          { evaluar @areaCirculo(@radio) finEval }
+ 
+ declarar (@radio=5@areaCirculo=procedimiento(@area) haga (3.14*(@area*@area)) finProc)
+          { evaluar @areaCirculo(@radio) finEval }
 
 
-;Arbol sintaxis abstracta 2 punto 7
-; un-programa
-; |
-; |-- variableLocal-exp (@x, @y)
-; |   |
-; |   |-- procedimiento-exp (@a, @b)
-; |   |   |
-; |   |   |-- primapp-bin-exp
-; |   |   |   |
-; |   |   |   |-- primapp-bin-exp (var-exp @a * var-exp @a)
-; |   |   |   |
-; |   |   |   |-- primitiva-suma
-; |   |   |   |
-; |   |   |   |-- primapp-bin-exp (var-exp @b * var-exp @b)
-; |   |
-; |   |-- procedimiento-exp (@x, @y)
-; |   |   |
-; |   |   |-- primapp-bin-exp (var-exp @x + var-exp @y)
-; |
-; |-- primapp-bin-exp
-; |   |
-; |   |-- app-exp (var-exp @x (numero-lit 1, numero-lit 2))
-; |   |
-; |   |-- primitiva-suma
-; |   |
-; |   |-- app-exp (var-exp @y (numero-lit 2, numero-lit 3))
-
-
-;Arbol sintaxis abstracta 3 punto 7
-
-; un-programa
-; |
-; |-- variableLocal-exp (@x, @y)
-; |   |
-; |   |-- if-exp
-; |   |   |
-; |   |   |-- primapp-bin-exp (var-exp @a * var-exp @b)
-; |   |   |
-; |   |   |-- primapp-bin-exp (var-exp @d * var-exp @e)
-; |   |   |
-; |   |   |-- primapp-un-exp (primitiva-longitud) *
-; |   |   |   |
-; |   |   |   |-- primapp-bin-exp (var-exp @d * var-exp @e)
-; |   |   |
-; |   |-- procedimiento-exp (@x, @y)
-; |   |   |
-; |   |   |-- primapp-bin-exp (var-exp @x + var-exp @y)
-; |
-; |-- primapp-bin-exp
-; |   |
-; |   |-- primapp-un-exp (primitiva-longitud) *
-; |   |   |
-; |   |   |-- var-exp @x
-; |   |
-; |   |-- primitiva-multi
-; |   |
-; |   |-- app-exp (var-exp @y, numero-lit 2, numero-lit 3)
-; 
-
+; PUNTO B
+ ;// Calculo Factorial
+ ;// Factorial de 5 y factorial de 10
+ varFact @factorial(@numero)=
+ Si @numero entonces (@numero * evaluar@factorial(sub1(@numero))finEval) sino 1 finSI
+ {evaluar @factorial(10) finEval}
+ 
+ varFact @factorial(@numero)=
+ Si @numero entonces (@numero * evaluar@factorial(sub1(@numero))finEval) sino 1 finSI
+ {evaluar @factorial(5) finEval} 
+ 
