@@ -152,27 +152,7 @@
       (letrec-exp (proc-names idss bodies letrec-body)
                   (evaluar-expresion letrec-body
                                    (extend-env-recursively proc-names idss bodies env)))
-      )))
-
-
-      (variableLocal-exp (ids rands body)
-               (let ((args (eval-rands rands env)))
-                 (evaluar-expresion body
-                                  (extended-env ids args env))))
-    
-       (procedimiento-exp (ids body)
-                (cerradura ids body env))
-      (app-exp (rator rands)
-               (let ((proc (evaluar-expresion rator env))
-                     (args (eval-rands rands env)))
-                 (if (procVal? proc)
-                     (apply-procedure proc args)
-                     (eopl:error 'eval-expression
-                                 "Attempt to apply non-procedure ~s" proc))))
-      (letrec-exp (proc-names idss bodies letrec-body)
-                  (evaluar-expresion letrec-body
-                                   (extend-env-recursively proc-names idss bodies env)))
-      
+      )))     
 
 
 ;apply-primitive-bin: <primitiva> <expresion> <expresion> -> numero | string
@@ -267,7 +247,7 @@
                                  ;No está, busca de nuevo quitando la parte ya buscada
                                  (buscar-variable env sym))))
       (recursively-extended-env-record (proc-names idss bodies old-env)
-                                       (let ((pos (list-find-position sym proc-names)))
+                                       (let ((pos (find sym proc-names)))
                                          (if (number? pos)
                                              (cerradura (list-ref idss pos)
                                                       (list-ref bodies pos)
@@ -310,3 +290,17 @@
     (evaluar-expresion rand env)))
 
 ;/////////////////////////////////////////////////////////Funciones Auxiliares/////////////////////////////////////////////////////////
+
+(define find
+  (lambda (sym los)
+    (list-index (lambda (sym1) (eqv? sym1 sym)) los)))
+
+(define list-index
+  (lambda (pred ls)
+    (cond
+      ((null? ls) #f)
+      ((pred (car ls)) 0)
+      (else (let ((list-index-r (list-index pred (cdr ls))))
+              (if (number? list-index-r)
+                (+ list-index-r 1)
+                #f))))))
