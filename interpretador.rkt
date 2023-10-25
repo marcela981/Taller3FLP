@@ -305,27 +305,28 @@
                 (+ list-index-r 1)
                 #f))))))
 
-;/////////////////////////////////////////////////////////Resolución de puntos/////////////////////////////////////////////////////////
+
+;/////////////////////////////////////////////////////////Dibujos/////////////////////////////////////////////////////////
 
 ; PUNTO A
-;// Funcion areaCirculo
-;// Calcula el area de un circulo dado un radio (A=PI*r*r)
-;declarar (@radio=2.5;
-;          @areaCirculo=procedimiento(@area) haga (3.14*(@area*@area)) finProc)
-;        { evaluar @areaCirculo(@radio) finEval }
+ ;// Funcion areaCirculo
+ ;// Calcula el area de un circulo dado un radio (A=PI*r*r)
+ declarar (@radio=2.5;
+           @areaCirculo=procedimiento(@area) haga (3.14*(@area*@area)) finProc)
+          { evaluar @areaCirculo(@radio) finEval }
  
-;declarar (@radio=5@areaCirculo=procedimiento(@area) haga (3.14*(@area*@area)) finProc)
-;{ evaluar @areaCirculo(@radio) finEval }
+ declarar (@radio=5@areaCirculo=procedimiento(@area) haga (3.14*(@area*@area)) finProc)
+          { evaluar @areaCirculo(@radio) finEval }
 
 
 ; PUNTO B
-; // Calculo Factorial
-; // Factorial de 5 y factorial de 10
-; varFact @factorial(@numero)=
-; Si @numero entonces (@numero * evaluar@factorial(sub1(@numero))finEval) sino 1 finSI
-; {evaluar @factorial(10) finEval}
-; 
-; varFact @factorial(@numero)=
-; Si @numero entonces (@numero * evaluar@factorial(sub1(@numero))finEval) sino 1 finSI
-; {evaluar @factorial(5) finEval}
-
+ ;// Calculo Factorial
+ ;// Factorial de 5 y factorial de 10
+ varFact @factorial(@numero)=
+ Si @numero entonces (@numero * evaluar@factorial(sub1(@numero))finEval) sino 1 finSI
+ {evaluar @factorial(10) finEval}
+ 
+ varFact @factorial(@numero)=
+ Si @numero entonces (@numero * evaluar@factorial(sub1(@numero))finEval) sino 1 finSI
+ {evaluar @factorial(5) finEval} 
+ 
