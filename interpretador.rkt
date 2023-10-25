@@ -157,7 +157,19 @@
                  (evaluar-expresion body
                                   (extended-env ids args env))))
     
-
+       (procedimiento-exp (ids body)
+                (cerradura ids body env))
+      (app-exp (rator rands)
+               (let ((proc (evaluar-expresion rator env))
+                     (args (eval-rands rands env)))
+                 (if (procVal? proc)
+                     (apply-procedure proc args)
+                     (eopl:error 'eval-expression
+                                 "Attempt to apply non-procedure ~s" proc))))
+      (letrec-exp (proc-names idss bodies letrec-body)
+                  (evaluar-expresion letrec-body
+                                   (extend-env-recursively proc-names idss bodies env)))
+      
 
 
 ;apply-primitive-bin: <primitiva> <expresion> <expresion> -> numero | string
@@ -198,7 +210,7 @@
             (indice-lista-aux (+ n 1) pred (cdr lst))))))
 
 ;buscar-pos
-;Funcion auxiliar que retorna la posición del lemento
+;Funcion auxiliar que retorna la posición del elemento
 (define (buscar-pos lst n)
   (if (zero? n)
       (car lst)
@@ -259,7 +271,23 @@
                                              (buscar-variable old-env sym))))
       )))
  
-                                 
+
+;; Se define nuevo datatype para la cerradura
+(define-datatype procVal procVal?
+  (cerradura
+   (lista-ID(list-of symbol?))
+   (exp expresion?)
+   (amb environment?)))
+
+
+;apply-procedure: evalua el cuerpo de un procedimientos en el ambiente extendido correspondiente
+(define apply-procedure
+  (lambda (proc args)
+    (cases procVal proc
+      (cerradura (ids body env)
+               (evaluar-expresion body (extended-env ids args env))))))
+
+
 ;Función para probar booleanos
 (define valor-verdad?
   (lambda(x)
