@@ -2,11 +2,13 @@
 
 ;;Taller #3
 
-;;Marcela Mazo Castro 1843612
+;; Marcela Mazo Castro 1843612
 ;; Hassen David Ortiz 2177273
+;; Kevin Tobar 1941369
+;; https://github.com/marcela981/Taller3FLP/
 
 
-;Especificación Léxica
+;; Especificación Léxica
 
 (define scanner-especificacion-lexica
 '(
@@ -22,18 +24,17 @@
  )
 )
 
-;Gramatica
+;; Gramatica
 
-(define interprerador-gramatica
+(define interpretador-gramatica
   '(
-
-    ;Programa
+    ;; Programa
     (programa (expresion) un-programa)
 
     ;; Body
     (cuerpo (expresion (arbno expresion)) cuerpoc)
 
-    ;Expresiones
+    ;; Expresiones
     (expresion (numero) numero-lit)
     (expresion ("\""texto"\"") texto-lit)
     (expresion (identificador) var-exp)
@@ -46,9 +47,8 @@
     (expresion ("declaraRec" (arbno identificador "(" (separated-list identificador ",") ")" "=" expresion)  "{" expresion "}") 
                 letrec-exp)
 
-
     
-    ;Primitiva binaria
+    ;; Primitiva binaria
     
     (primitiva-binaria ("+") primitiva-suma)
     (primitiva-binaria ("~") primitiva-resta)
@@ -56,13 +56,11 @@
     (primitiva-binaria ("*") primitiva-multi)
     (primitiva-binaria ("concat") primitiva-concat)
 
-    ;Primitiva unaria
+    ;; Primitiva unaria
     
     (primitiva-unaria ("longitud") primitiva-longitud)
     (primitiva-unaria ("add1") primitiva-add1)
-    (primitiva-unaria ("sub1") primitiva-sub1)
-    
-    )
+    (primitiva-unaria ("sub1") primitiva-sub1))
   )
 
 ;//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,25 +69,24 @@
 
 ;Tipos de datos para la sintaxis abstracta ((Análisis léxico y sintáctico)
 (define scan&parse
-  (sllgen:make-string-parser scanner-especificacion-lexica interprerador-gramatica))
+  (sllgen:make-string-parser scanner-especificacion-lexica interpretador-gramatica))
 
 ;El Analizador Léxico (Scanner)
-
 (define just-scan
-  (sllgen:make-string-scanner scanner-especificacion-lexica interprerador-gramatica))
+  (sllgen:make-string-scanner scanner-especificacion-lexica interpretador-gramatica))
   
-(sllgen:make-define-datatypes scanner-especificacion-lexica interprerador-gramatica)
+(sllgen:make-define-datatypes scanner-especificacion-lexica interpretador-gramatica)
 
 (define show-the-datatypes
-  (lambda () (sllgen:list-define-datatypes scanner-especificacion-lexica interprerador-gramatica)))
-;El Interpretador (FrontEnd + Evaluación + señal para lectura )
+  (lambda () (sllgen:list-define-datatypes scanner-especificacion-lexica interpretador-gramatica)))
 
+;El Interpretador (FrontEnd + Evaluación + señal para lectura )
 (define interpretador
   (sllgen:make-rep-loop  "--> "
     (lambda (pgm) (eval-program  pgm)) 
     (sllgen:make-stream-parser 
       scanner-especificacion-lexica
-      interprerador-gramatica)))
+      interpretador-gramatica)))
 
 ;//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -123,7 +120,6 @@
      '(1 2 3 "hola" "FLP")
      (empty-env))))
 
-;
 ;Evalua la expresión en el ambiente de entrada
 (define evaluar-expresion
   (lambda (exp env)
@@ -144,20 +140,7 @@
                (let ((args (eval-rands rands env)))
                  (evaluar-expresion body
                                   (extended-env ids args env))))
-       ;;Error de definición(?)
-      )))
-
-      (if-exp (test-exp true-exp false-exp)
-              (if (true-value? (evaluar-expresion test-exp env))
-                  (evaluar-expresion true-exp env)
-                  (evaluar-expresion false-exp env))) 
-
-      (variableLocal-exp (ids rands body)
-               (let ((args (eval-rands rands env)))
-                 (evaluar-expresion body
-                                  (extended-env ids args env))))
-    
-       (procedimiento-exp (ids body)
+      (procedimiento-exp (ids body)
                 (cerradura ids body env))
       (app-exp (rator rands)
                (let ((proc (evaluar-expresion rator env))
@@ -169,7 +152,7 @@
       (letrec-exp (proc-names idss bodies letrec-body)
                   (evaluar-expresion letrec-body
                                    (extend-env-recursively proc-names idss bodies env)))
-      
+      )))     
 
 
 ;apply-primitive-bin: <primitiva> <expresion> <expresion> -> numero | string
@@ -187,6 +170,7 @@
 (define apply-primitive-un
   (lambda (prim args)
     (cases primitiva-unaria prim
+      (primitiva-longitud () (string-length args))
       (primitiva-add1 () (+ args 1))
       (primitiva-sub1 () (- args 1))
       )))
@@ -263,7 +247,7 @@
                                  ;No está, busca de nuevo quitando la parte ya buscada
                                  (buscar-variable env sym))))
       (recursively-extended-env-record (proc-names idss bodies old-env)
-                                       (let ((pos (list-find-position sym proc-names)))
+                                       (let ((pos (find sym proc-names)))
                                          (if (number? pos)
                                              (cerradura (list-ref idss pos)
                                                       (list-ref bodies pos)
@@ -307,18 +291,31 @@
 
 ;/////////////////////////////////////////////////////////Funciones Auxiliares/////////////////////////////////////////////////////////
 
+(define find
+  (lambda (sym los)
+    (list-index (lambda (sym1) (eqv? sym1 sym)) los)))
+
+(define list-index
+  (lambda (pred ls)
+    (cond
+      ((null? ls) #f)
+      ((pred (car ls)) 0)
+      (else (let ((list-index-r (list-index pred (cdr ls))))
+              (if (number? list-index-r)
+                (+ list-index-r 1)
+                #f))))))
 
 ;/////////////////////////////////////////////////////////Resolución de puntos/////////////////////////////////////////////////////////
 
 ; PUNTO A
-; // Funcion areaCirculo
-; // Calcula el area de un circulo dado un radio (A=PI*r*r)
-; declarar (@radio=2.5;
-;           @areaCirculo=procedimiento(@area) haga (3.14*(@area*@area)) finProc)
-;          { evaluar @areaCirculo(@radio) finEval }
-; 
-; declarar (@radio=5;@areaCirculo=procedimiento(@area) haga (3.14*(@area*@area)) finProc)
-;          { evaluar @areaCirculo(@radio) finEval }
+;// Funcion areaCirculo
+;// Calcula el area de un circulo dado un radio (A=PI*r*r)
+;declarar (@radio=2.5;
+;          @areaCirculo=procedimiento(@area) haga (3.14*(@area*@area)) finProc)
+;        { evaluar @areaCirculo(@radio) finEval }
+ 
+;declarar (@radio=5@areaCirculo=procedimiento(@area) haga (3.14*(@area*@area)) finProc)
+;{ evaluar @areaCirculo(@radio) finEval }
 
 
 ; PUNTO B
@@ -332,27 +329,3 @@
 ; Si @numero entonces (@numero * evaluar@factorial(sub1(@numero))finEval) sino 1 finSI
 ; {evaluar @factorial(5) finEval}
 
-; PUNTO C
-; Calcula la suma de dos numeros forma recursiva con las primitivas add1 y sub1. 
-;letrec
-;       @sumar(@a,@b) = Si @a entonces add1(evaluar @sumar(sub1(@a),@b)finEval) sino @b finSI
-;       in
-;       evaluar @sumar(4,5) finEval
-
-; PUNTO D 
-;Resta: calcula la resta de dos numeros de forma recursiva con las primitivas add1 y sub1. 
-;letrec
-;       @resta(@a,@b) = Si @b entonces sub1(evaluar @resta(@a,sub1(@b))finEval) sino @a finSI
-;       in
-;       evaluar @resta(10,3) finEval
-
-
-
-;Multiplicacion: calcula la multiplicación de dos numeros de forma recursiva con las primitivas add1 y sub1. 
-;  letrec
-;    @restar(@a,@b) = Si @b entonces evaluar @restar(sub1(@a),sub1(@b)) finEval sino @a finSI
-
-;    @suma(@a,@b) = Si @b entonces evaluar @suma(add1(@a),sub1(@b)) finEval sino @a finSI
-;    @multiplicacion(@a,@b) = Si @b entonces evaluar @suma(@a , evaluar @multiplicacion(@a,sub1(@b)) finEval ) finEval sino evaluar @restar(@a,@a) finEval finSI 
-
-;    in evaluar @multiplicacion(10,3) finEval
