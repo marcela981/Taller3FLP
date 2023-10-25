@@ -333,7 +333,7 @@
 ; PUNTO E
 
 declaraAlm
-//Procedimiento que retorna un string con los nombres
+;//Procedimiento que retorna un string con los nombres
 @integrantes() = "Marcela-Hassen-Kevin" 
 @hola (@integrantes) = ("Hola:" concat evaluar @integrantes() finEval)
 {
@@ -341,7 +341,7 @@ evaluar @decorate () finEval }
 
 ; PUNTO F
 declaraAlm
- //Procedimiento que retorna un string con los nombres
+;//Procedimiento que retorna un string con los nombres
 @integrantes() = "Marcela-Hassen-Kevin"
 @hola(@integrantes) = ("Hola:" concat evaluar @integrantes() finEval) 
 @decorate(@x) = (evaluar @hola(@integrantes) finEval concat @x) 
